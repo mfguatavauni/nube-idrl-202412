@@ -28,7 +28,7 @@ class Task(db.Model):
     status = db.Column(db.Enum(StatusType), nullable=False)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     processing_at = db.Column(db.DateTime, nullable=True)   
-    path=db.Column(db.String(120), nullable=False)
+    path=db.Column(db.String(120), nullable=True)
     __table_args__ = (UniqueConstraint('id', 'user_id', name='_user_id_user_uc'),)
 
 class TaskSchema(SQLAlchemyAutoSchema):

@@ -13,7 +13,8 @@ def process_video_task(self, filename, task_id):
     path_to_video = os.path.join(uploads_dir, filename)
     path_to_logo = os.path.join(uploads_dir, 'idrl_logo.png')
     milliseconds = int(round(time.time() * 1000))
-    output_path = os.path.join(uploads_dir, "processed", f"{str(milliseconds)}_{filename}")
+    file_processed_name = f"{str(milliseconds)}_{filename}"
+    output_path = os.path.join(uploads_dir, "processed", file_processed_name)
 
     try:
         clip = VideoFileClip(path_to_video)
@@ -32,10 +33,11 @@ def process_video_task(self, filename, task_id):
         final_clip = CompositeVideoClip([clip_resized, logo_clip])
 
         final_clip.write_videofile(output_path, codec="libx264", audio_codec="aac")
-        with app.app_context():
+        with current_app.app_context():
             task = Task.query.get(task_id)
             if task:
                 task.status = 'PROCESSED'
+                task.path = file_processed_name
                 db.session.commit()
     except Exception as e:
         print(f"Error processing video {filename}: {str(e)}")
