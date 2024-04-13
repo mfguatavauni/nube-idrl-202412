@@ -24,21 +24,27 @@ def process_video_task(self, filename, task_id):
             clip = clip.subclip(0, 20)
 
         clip_resized = resize(clip, width=clip.w, height=int(clip.w * 9 / 16))
-        logo_clip = ImageClip(path_to_logo)
-        logo_clip = logo_clip.set_duration(clip_resized.duration)
-        logo_clip = logo_clip.resize(height=int(clip_resized.h * 0.1))
-        logo_clip = logo_clip.margin(right=8, top=8, opacity=0)
-        logo_clip = logo_clip.set_pos(("right", "top"))
+        center_x = clip_resized.w / 2
+        center_y = clip_resized.h / 2
+        logo_clip = ImageClip(path_to_logo, duration=0.5)
 
-        final_clip = CompositeVideoClip([clip_resized, logo_clip])
+        logo_clip_start = ImageClip(path_to_logo, duration=0.5)
+        logo_clip_start = logo_clip_start.set_position(('center', 'center')).set_start(0)
 
+        logo_clip_end = ImageClip(path_to_logo, duration=0.5)
+        logo_clip_end = logo_clip_end.set_position(('center', 'center')).set_start(clip_resized.duration - 0.5)
+
+
+        final_clip = CompositeVideoClip([clip_resized, logo_clip_start, logo_clip_end])
+
+    
         final_clip.write_videofile(output_path, codec="libx264", audio_codec="aac")
-        with current_app.app_context():
-            task = Task.query.get(task_id)
-            if task:
-                task.status = 'PROCESSED'
-                task.path = file_processed_name
-                db.session.commit()
+        # with current_app.app_context():
+        #     task = Task.query.get(task_id)
+        #     if task:
+        #         task.status = 'PROCESSED'
+        #         task.path = file_processed_name
+        #         db.session.commit()
     except Exception as e:
         print(f"Error processing video {filename}: {str(e)}")
         if task_id:
