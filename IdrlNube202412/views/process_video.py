@@ -13,7 +13,7 @@ def process_video_task(self, filename, task_id):
     path_to_video = os.path.join(uploads_dir, filename)
     path_to_logo = os.path.join(uploads_dir, 'idrl_logo.png')
     milliseconds = int(round(time.time() * 1000))
-    output_path = os.path.join(uploads_dir, f"{str(milliseconds)}_{filename}")
+    output_path = os.path.join(uploads_dir, "processed", f"{str(milliseconds)}_{filename}")
 
     try:
         clip = VideoFileClip(path_to_video)

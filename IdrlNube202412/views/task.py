@@ -30,7 +30,7 @@ class ViewTask(Resource):
 
                 task.status = 'UPLOADED'
                 task.user_id = get_jwt_identity()
-                task.path = save_path
+                task.path = filename # Esto no debería guardarse acá, debería guardarse el filename del archivo ya procesado
 
                 db.session.add(task)
                 db.session.commit()

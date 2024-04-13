@@ -11,6 +11,7 @@ from models import db
 from views.login import VistaLogin
 from views.signup import ViewLoginUp
 from views.task import ViewTask
+from views.download import ViewDownload
 
 from app.celery_config import celery
 
@@ -30,6 +31,7 @@ def create_app():
     api = Api(app)
     api.add_resource(ViewLoginUp, "/auth/signup") 
     api.add_resource(VistaLogin, "/auth/login")
+    api.add_resource(ViewDownload, "/api/download/<string:filename>")
     api.add_resource(ViewTask, "/api/task/<int:id_task>", "/api/task")
 
     # ma.init_app(app)
