@@ -4,7 +4,7 @@ Este proyecto genera las api para el manejo del proyecto IDRL
 
 # Ejecución
 
-En la consola ejecutar:
+En una terminal ejecutar:
 
 `cd IdrlNube202412`
 
