@@ -1,6 +1,7 @@
 # Proyecto API REST - FLASk (IDRL Grupo:)
 Este proyecto genera las api para el manejo del proyecto IDRL
 
+- Version: 1.0.0
 
 # Ejecución
 
