@@ -1,0 +1,43 @@
+version: '3.8'
+services:
+  web:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - FLASK_APP=app.app.py
+    depends_on:
+      - db
+      - redis
+    command: gunicorn "app:create_app()" -b 0.0.0.0:8080
+    volumes:
+      - .:/app
+      - ./uploads:/app/uploads
+
+  db:
+    image: postgres:13
+    environment:
+      - POSTGRES_DB=idrl
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  
+  celery:
+    build: .
+    volumes:
+      - ./uploads:/app/uploads
+      - .:/app
+    command: celery -A app.celery_config.celery worker --loglevel=info
+    depends_on:
+      - web
+      - redis
+  
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+volumes:
+  postgres_data:

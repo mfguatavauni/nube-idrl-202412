@@ -1,37 +1,51 @@
 import json
 from flask import jsonify, make_response, request, current_app
-from flask_jwt_extended import create_access_token, jwt_required
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from flask_restful import Resource
 import jwt
+from werkzeug.utils import secure_filename
+import os
 
 from models.models import Task, TaskSchema, db
+
+from .process_video import process_video_task
 
 task_schema = TaskSchema()
 
 class ViewTask(Resource):
-    
     @jwt_required()
     def post(self):
-        #task = Task(**request.json)
-        #Se reciben losparametros de la tarea
         task = Task()
-        task.user_id = request.json['user_id']
-        task.status = request.json['status']
-        #Se recibe el archivo en base64
-        _FileBase64 = request.json['fileBase64']
-        
         
         try:
-            ##Almacenar la tarea
-            db.session.add(task)
-            db.session.commit()
-            ##Almacenar el archivo para ser procesado
+            if 'fileName' not in request.files:
+                return make_response(jsonify({'error': 'No file part'}), 400)
+            file = request.files['fileName']
+            if file.filename == '':
+                return make_response(jsonify({'error': 'No selected file'}), 400)
+            if file and '.' in file.filename and file.filename.rsplit('.', 1)[1].lower() in {'mp4', 'avi', 'mov'}:
+                filename = secure_filename(file.filename)
+                save_path = os.path.join('/app/uploads', filename)
+                file.save(save_path)
 
-            ##Retornar el id de la tarea
-            return make_response(jsonify({"message": "Tarea creada Id: " + str(task.id) }), 201)
+                task.status = 'UPLOADED'
+                task.user_id = get_jwt_identity()
+                task.path = filename # Esto no debería guardarse acá, debería guardarse el filename del archivo ya procesado
+
+                db.session.add(task)
+                db.session.commit()
+
+                process_video_task.delay(filename, task.id)
+
+                return make_response(jsonify({
+                    'message': 'File uploaded successfully, processing will start shortly.',
+                    'filename': filename,
+                    'task_id': task.id
+                }), 200)
+            else:
+                return make_response(jsonify({'error': 'Invalid file type'}), 400)
         except Exception as e:
-            return make_response(jsonify({"error": str(e)}), 400)
-
+            return make_response(jsonify({'error': str(e)}), 400)
 
     @jwt_required()
     def get(self):
