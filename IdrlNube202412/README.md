@@ -17,6 +17,6 @@ Luego ejecutar `docker-compose` de la siguiente manera:
 
 * Ruta EndPoint 1 Registro usuarios [POST]:         ```http://localhost:8080/auth/signup```
 * Ruta EndPoint 2 Autenticacion[POST]: [POST]:      ```http://localhost:8080/auth/login```
-* Ruta EndPoint 3 Retorna tareas por Usr aut [GET]: ```http://localhost.123:8080/api/task```
-* Ruta EndPoint 4 Creacion de tareas [POST]:        ```http://localhost.123:8080/api/task```
-* Ruta EndPoint 5 Retorno de tarea por Id [GET]:    ```http://localhost.123:8080/api/task/1```
+* Ruta EndPoint 3 Retorna tareas por Usr aut [GET]: ```http://localhost:8080/api/task```
+* Ruta EndPoint 4 Creacion de tareas [POST]:        ```http://localhost:8080/api/task```
+* Ruta EndPoint 5 Retorno de tarea por Id [GET]:    ```http://localhost:8080/api/task/1```
