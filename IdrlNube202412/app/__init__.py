@@ -43,7 +43,7 @@ def create_app():
 
     celery.conf.update(app.config)
 
-    with app.app_context():
+    # with app.app_context():
         # db.create_all()
 
     return app
