@@ -6,24 +6,26 @@ services:
       - "8080:8080"
     environment:
       - FLASK_APP=app.app.py
-    depends_on:
-      - db
-      - redis
+      - DATABASE_URL=postgresql://postgres:postgres@34.134.127.214:5432/ldrl
+      - JWT_SECRET_KEY=Seb7912Als89***.88.9Super
+    # depends_on:
+      # - db
+      # - redis
     command: gunicorn "app:create_app()" -b 0.0.0.0:8080
     volumes:
       - .:/app
       - ./uploads:/app/uploads
 
-  db:
-    image: postgres:13
-    environment:
-      - POSTGRES_DB=idrl
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+  # db:
+  #   image: postgres:13
+  #   environment:
+  #     - POSTGRES_DB=idrl
+  #     - POSTGRES_USER=postgres
+  #     - POSTGRES_PASSWORD=postgres
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
   
   celery:
     build: .

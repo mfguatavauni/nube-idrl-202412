@@ -18,12 +18,14 @@ from app.celery_config import celery
 def create_app():
     app = Flask(__name__)
 
-    app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql://postgres:postgres@db:5432/idrl'
+    # app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql://postgres:postgres@db:5432/idrl'
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv('DATABASE_URL')
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     
-    app.config['UPLOAD_FOLDER'] = '/app/uploads'
+    app.config['UPLOAD_FOLDER'] = '/home/angelricardoracinimeza/remote_folder'
 
-    app.config["JWT_SECRET_KEY"] = 'Seb7912Als89***.88.9Super'
+    # app.config["JWT_SECRET_KEY"] = 'Seb7912Als89***.88.9Super'
+    app.config["JWT_SECRET_KEY"] = os.getenv('JWT_SECRET_KEY')
     app.config["PROPAGATE_EXCEPTIONS"] = True
 
     db.init_app(app)
