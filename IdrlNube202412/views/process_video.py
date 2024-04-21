@@ -9,7 +9,7 @@ from app.celery_config import celery
 
 @celery.task(bind=True)
 def process_video_task(self, filename, task_id):
-    uploads_dir = os.getenv('UPLOAD_FOLDER', '/app/uploads')
+    uploads_dir = os.getenv('UPLOAD_FOLDER', '/shared_folder')
     path_to_video = os.path.join(uploads_dir, filename)
     path_to_logo = os.path.join(uploads_dir, 'idrl_logo.png')
     milliseconds = int(round(time.time() * 1000))

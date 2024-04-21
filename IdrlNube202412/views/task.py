@@ -25,7 +25,7 @@ class ViewTask(Resource):
                 return make_response(jsonify({'error': 'No selected file'}), 400)
             if file and '.' in file.filename and file.filename.rsplit('.', 1)[1].lower() in {'mp4', 'avi', 'mov'}:
                 filename = secure_filename(file.filename)
-                save_path = os.path.join('/app/uploads', filename)
+                save_path = os.path.join('/shared_folder', filename)
                 file.save(save_path)
 
                 task.status = 'UPLOADED'
