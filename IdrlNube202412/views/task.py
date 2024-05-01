@@ -4,6 +4,7 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 from flask_restful import Resource
 import jwt
 from werkzeug.utils import secure_filename
+from google.cloud import storage
 import os
 
 from models.models import Task, TaskSchema, db
@@ -11,6 +12,10 @@ from models.models import Task, TaskSchema, db
 from .process_video import process_video_task
 
 task_schema = TaskSchema()
+
+client = storage.Client()
+bucket_name = 'idrl-bucket'
+bucket = client.bucket(bucket_name)
 
 class ViewTask(Resource):
     @jwt_required()
@@ -25,8 +30,10 @@ class ViewTask(Resource):
                 return make_response(jsonify({'error': 'No selected file'}), 400)
             if file and '.' in file.filename and file.filename.rsplit('.', 1)[1].lower() in {'mp4', 'avi', 'mov'}:
                 filename = secure_filename(file.filename)
-                save_path = os.path.join('/home/angelricardoracinimeza/remote_folder', filename)
-                file.save(save_path)
+                blob = bucket.blob(filename)
+                blob.upload_from_file(file, content_type=file.content_type)
+                # save_path = os.path.join('/home/angelricardoracinimeza/remote_folder', filename)
+                # file.save(save_path)
 
                 task.status = 'UPLOADED'
                 task.user_id = get_jwt_identity()
