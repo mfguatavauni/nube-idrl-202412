@@ -4,17 +4,25 @@ from moviepy.video.fx.resize import resize
 from models.models import Task, db
 import time
 import os
+from google.cloud import storage
 
 from app.celery_config import celery
 
 @celery.task(bind=True)
 def process_video_task(self, filename, task_id):
-    uploads_dir = os.getenv('UPLOAD_FOLDER', '/home/angelricardoracinimeza/remote_folder')
+    client = storage.Client()
+    bucket_name = 'idrl-bucket'
+    bucket = client.bucket(bucket_name)
+
+    uploads_dir = os.getenv('UPLOAD_FOLDER', '/app/uploads')
     path_to_video = os.path.join(uploads_dir, filename)
     path_to_logo = os.path.join('/home/smilenaguevara/nube-idrl-202412/IdrlNube202412/uploads', 'idrl_logo.png')
     milliseconds = int(round(time.time() * 1000))
     file_processed_name = f"{str(milliseconds)}_{filename}"
     output_path = os.path.join(uploads_dir, "processed", file_processed_name)
+    blob = bucket.blob(f"processed/{file_processed_name}")
+    blob.upload_from_filename(output_path)
+    os.remove(output_path)
 
     try:
         clip = VideoFileClip(path_to_video)
