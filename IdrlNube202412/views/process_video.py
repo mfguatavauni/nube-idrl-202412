@@ -21,7 +21,7 @@ def process_video_task(self, filename, task_id):
     file_processed_name = f"{str(milliseconds)}_{filename}"
     output_path = os.path.join("/home/smilenaguevara/nube-idrl-202412/IdrlNube202412/uploads/processed", file_processed_name)
     
-    blob = self.bucket.blob(filename)
+    blob = bucket.blob(filename)
     video_buffer = io.BytesIO()
     blob.download_to_file(video_buffer)
     video_buffer.seek(0)
