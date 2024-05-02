@@ -1,0 +1,21 @@
+##!/bin/bash
+ ## Update the package list
+ sudo apt-get update
+ #
+ ## Install Python3 and pip
+ sudo apt-get install -y python3 python3-pip
+ #
+ ## Install virtualenv
+ sudo pip3 install virtualenv
+ #
+ ## Create a virtual environment
+ virtualenv venv
+ #
+ ## Activate the virtual environment
+ source venv/bin/activate
+ #
+ ## Install the requirements
+ pip install -r requirements.txt
+ #
+ ## Run the Flask application
+ flask run --host=0.0.0.0 --port=8080
