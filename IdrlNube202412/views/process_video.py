@@ -5,6 +5,7 @@ from models.models import Task, db
 import time
 import os
 from google.cloud import storage
+import io
 
 from app.celery_config import celery
 
@@ -54,7 +55,7 @@ def process_video_task(self, filename, task_id):
         final_clip.write_videofile(output_video_buffer, codec="libx264", audio_codec="aac")
         output_video_buffer.seek(0)
         
-        processed_blob = self.bucket.blob(f"processed/{file_processed_name}")
+        processed_blob = bucket.blob(f"processed/{file_processed_name}")
         processed_blob.upload_from_file(output_video_buffer)
         
         # with current_app.app_context():
