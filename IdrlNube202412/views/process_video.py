@@ -14,15 +14,13 @@ def process_video_task(self, filename, task_id):
     bucket_name = 'idrl-bucket'
     bucket = client.bucket(bucket_name)
 
-    uploads_dir = os.getenv('UPLOAD_FOLDER', '/app/uploads')
+    uploads_dir = os.getenv('UPLOAD_FOLDER', '/')
     path_to_video = os.path.join(uploads_dir, filename)
     path_to_logo = os.path.join('/home/smilenaguevara/nube-idrl-202412/IdrlNube202412/uploads', 'idrl_logo.png')
     milliseconds = int(round(time.time() * 1000))
     file_processed_name = f"{str(milliseconds)}_{filename}"
-    output_path = os.path.join(uploads_dir, "processed", file_processed_name)
-    blob = bucket.blob(f"processed/{file_processed_name}")
-    blob.upload_from_filename(output_path)
-    os.remove(output_path)
+    output_path = os.path.join("/home/smilenaguevara/nube-idrl-202412/IdrlNube202412/uploads/processed", file_processed_name)
+    
 
     try:
         clip = VideoFileClip(path_to_video)
@@ -47,6 +45,11 @@ def process_video_task(self, filename, task_id):
 
     
         final_clip.write_videofile(output_path, codec="libx264", audio_codec="aac")
+        
+        
+        blob = self.bucket.blob(f"processed/{file_processed_name}")
+        blob.upload_from_filename(output_path)
+        
         # with current_app.app_context():
         #     task = Task.query.get(task_id)
         #     if task:
