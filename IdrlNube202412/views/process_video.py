@@ -6,6 +6,7 @@ import time
 import os
 from google.cloud import storage
 import io
+import tempfile
 
 from app.celery_config import celery
 
