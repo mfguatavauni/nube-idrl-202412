@@ -23,12 +23,13 @@ def process_video_task(self, filename, task_id):
     output_path = os.path.join("/home/smilenaguevara/nube-idrl-202412/IdrlNube202412/uploads/processed", file_processed_name)
     
     blob = bucket.blob(filename)
-    video_buffer = io.BytesIO()
-    blob.download_to_file(video_buffer)
-    video_buffer.seek(0)
+    with tempfile.NamedTemporaryFile(delete=False) as temp_video_file:
+        blob.download_to_filename(temp_video_file.name)
+        temp_video_path = temp_video_file.name
+    
 
     try:
-        clip = VideoFileClip(video_buffer)
+        clip = VideoFileClip(temp_video_path)
 
         if clip.duration > 20:
             print(clip.duration)
@@ -49,14 +50,10 @@ def process_video_task(self, filename, task_id):
         final_clip = CompositeVideoClip([clip_resized, logo_clip_start, logo_clip_end])
 
     
-        # final_clip.write_videofile(output_path, codec="libx264", audio_codec="aac")
-        
-        output_video_buffer = io.BytesIO()
-        final_clip.write_videofile(output_video_buffer, codec="libx264", audio_codec="aac")
-        output_video_buffer.seek(0)
-        
-        processed_blob = bucket.blob(f"processed/{file_processed_name}")
-        processed_blob.upload_from_file(output_video_buffer)
+        final_clip.write_videofile(output_path, codec="libx264", audio_codec="aac")
+
+        processed_blob = self.bucket.blob(f"processed/{file_processed_name}")
+        processed_blob.upload_from_filename(output_path)
         
         # with current_app.app_context():
         #     task = Task.query.get(task_id)
