@@ -53,7 +53,7 @@ def process_video_task(self, filename, task_id):
     
         final_clip.write_videofile(output_path, codec="libx264", audio_codec="aac")
 
-        processed_blob = self.bucket.blob(f"processed/{file_processed_name}")
+        processed_blob = bucket.blob(f"processed/{file_processed_name}")
         processed_blob.upload_from_filename(output_path)
         
         # with current_app.app_context():
