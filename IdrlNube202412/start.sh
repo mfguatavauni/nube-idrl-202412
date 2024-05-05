@@ -3,8 +3,7 @@
 # Update the package list
 sudo apt-get update
 
-gcloud sql connect db --user=postgres
-export DATABASE_URL=postgresql://postgres:postgres@23.251.146.53:5432/idrl
+export DATABASE_URL=postgresql://postgres:postgres2020@23.251.146.53:5432/idrl
 
 # Install Python3 and pip
 sudo apt-get install -y python3 python3-pip python3-venv libpq-dev libjpeg-dev git
