@@ -61,7 +61,7 @@ def process_video_task(filename, task_id):
         print(f"Error processing video {filename}: {str(e)}")
 
 subscriber = pubsub_v1.SubscriberClient()
-subscription_path = 'projects/soluciones-cloud-2024120/subscriptions/your-subscription-name'
+subscription_path = 'projects/soluciones-cloud-2024120/subscriptions/idrl-pending-to-process-sub'
 
 def callback(message):
     print(f'Received message: {message}')
