@@ -9,7 +9,7 @@ import os
 
 from models.models import Task, TaskSchema, db
 
-from .process_video import process_video_task
+# from .process_video import process_video_task
 from google.cloud import pubsub_v1
 
 publisher = pubsub_v1.PublisherClient()
