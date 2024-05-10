@@ -1,7 +1,7 @@
 from flask import current_app
 from moviepy.editor import VideoFileClip, concatenate_videoclips, CompositeVideoClip, ImageClip
 from moviepy.video.fx.resize import resize
-from models.models import Task, db
+# from models.models import Task, db
 import time
 import os
 from google.cloud import storage
@@ -58,11 +58,6 @@ def process_video_task(filename, task_id):
         
     except Exception as e:
         print(f"Error processing video {filename}: {str(e)}")
-        if task_id:
-            task = Task.query.get(task_id)
-            if task:
-                task.status = 'ERROR'
-                db.session.commit()
 
 subscriber = pubsub_v1.SubscriberClient()
 subscription_path = 'projects/soluciones-cloud-2024120/subscriptions/your-subscription-name'
