@@ -13,7 +13,7 @@ from views.signup import ViewLoginUp
 from views.task import ViewTask
 from views.download import ViewDownload
 
-from app.celery_config import celery
+# from app.celery_config import celery
 
 def create_app():
     app = Flask(__name__)
@@ -41,7 +41,7 @@ def create_app():
     jwt = JWTManager(app)
     CORS(app)
 
-    celery.conf.update(app.config)
+    # celery.conf.update(app.config)
 
     with app.app_context():
         db.create_all()

@@ -10,6 +10,10 @@ import os
 from models.models import Task, TaskSchema, db
 
 from .process_video import process_video_task
+from google.cloud import pubsub_v1
+
+publisher = pubsub_v1.PublisherClient()
+topic_name = 'projects/soluciones-cloud-2024120/subscriptions/idrl-pending-to-process-sub'
 
 task_schema = TaskSchema()
 
@@ -37,12 +41,18 @@ class ViewTask(Resource):
 
                 task.status = 'UPLOADED'
                 task.user_id = get_jwt_identity()
-                task.path = filename # Esto no debería guardarse acá, debería guardarse el filename del archivo ya procesado
+                task.path = filename
 
                 db.session.add(task)
                 db.session.commit()
 
-                process_video_task.delay(filename, task.id)
+                # process_video_task.delay(filename, task.id)
+
+                data = json.dumps({
+                    'filename': filename,
+                    'task_id': task.id
+                })
+                publisher.publish(topic_name, data.encode('utf-8'))
 
                 return make_response(jsonify({
                     'message': 'File uploaded successfully, processing will start shortly.',

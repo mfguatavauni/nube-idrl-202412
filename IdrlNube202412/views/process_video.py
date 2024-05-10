@@ -8,10 +8,10 @@ from google.cloud import storage
 import io
 import tempfile
 
-from app.celery_config import celery
+# from app.celery_config import celery
 
-@celery.task(bind=True)
-def process_video_task(self, filename, task_id):
+# @celery.task(bind=True)
+def process_video_task(filename, task_id):
     client = storage.Client()
     bucket_name = 'idrl-bucket'
     bucket = client.bucket(bucket_name)
@@ -56,12 +56,6 @@ def process_video_task(self, filename, task_id):
         processed_blob = bucket.blob(f"processed/{file_processed_name}")
         processed_blob.upload_from_filename(output_path)
         
-        # with current_app.app_context():
-        #     task = Task.query.get(task_id)
-        #     if task:
-        #         task.status = 'PROCESSED'
-        #         task.path = file_processed_name
-        #         db.session.commit()
     except Exception as e:
         print(f"Error processing video {filename}: {str(e)}")
         if task_id:
@@ -69,3 +63,30 @@ def process_video_task(self, filename, task_id):
             if task:
                 task.status = 'ERROR'
                 db.session.commit()
+
+subscriber = pubsub_v1.SubscriberClient()
+subscription_path = 'projects/soluciones-cloud-2024120/subscriptions/your-subscription-name'
+
+def callback(message):
+    print(f'Received message: {message}')
+    data = json.loads(message.data.decode('utf-8'))
+    filename = data['filename']
+    task_id = data['task_id']
+
+    try:
+        process_video_task(filename, task_id)
+        message.ack()
+    except Exception as e:
+        print(f'Error processing video {filename}: {str(e)}')
+        message.nack()
+
+def main():
+    streaming_pull_future = subscriber.subscribe(subscription_path, callback=callback)
+    print(f'Listening for messages on {subscription_path}')
+    try:
+        streaming_pull_future.result()
+    except KeyboardInterrupt:
+        streaming_pull_future.cancel()
+
+if __name__ == '__main__':
+    main()
