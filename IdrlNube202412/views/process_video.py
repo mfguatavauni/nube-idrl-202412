@@ -7,6 +7,7 @@ import os
 from google.cloud import storage
 import io
 import tempfile
+from google.cloud import pubsub_v1
 
 # from app.celery_config import celery
 
