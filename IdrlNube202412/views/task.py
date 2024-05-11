@@ -13,7 +13,7 @@ from models.models import Task, TaskSchema, db
 from google.cloud import pubsub_v1
 
 publisher = pubsub_v1.PublisherClient()
-topic_name = 'projects/soluciones-cloud-2024120/subscriptions/idrl-pending-to-process-sub'
+topic_name = 'projects/soluciones-cloud-2024120/topics/idrl-pending-to-process'
 
 task_schema = TaskSchema()
 
